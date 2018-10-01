@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://src/objects/Tail/Tail.gd" type="Script" id=1]
+[ext_resource path="res://src/objects/Tail/sprite.png" type="Texture" id=2]
+
+[node name="Tail" type="Area2D"]
+
+position = Vector2( 377, 92 )
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+collision_layer = 0
+collision_mask = 2
+audio_bus_override = false
+audio_bus_name = "Master"
+script = ExtResource( 1 )
+_sections_unfolded = [ "Collision", "Transform" ]
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+
+position = Vector2( -73, 225 )
+scale = Vector2( 3, 3 )
+z_index = 2
+texture = ExtResource( 2 )
+_sections_unfolded = [ "Transform", "Z Index" ]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="1"]
+
+build_mode = 0
+polygon = PoolVector2Array( 0, 24, -73, 68, -97, 140, -113, 190, -102, 291, -41, 394, -9, 438, -56, 400, -89, 356, -129, 274, -139, 186, -98, 59, -8, -10 )
+
+[connection signal="body_entered" from="." to="." method="_on_Tail_body_entered"]
+
+

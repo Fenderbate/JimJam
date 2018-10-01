@@ -1,22 +1,100 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://src/objects/Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://src/objects/Player/shadow.png" type="Texture" id=2]
+[ext_resource path="res://src/objects/Player/sprite.png" type="Texture" id=3]
+[ext_resource path="res://src/objects/Player/death.png" type="Texture" id=4]
+[ext_resource path="res://src/objects/Player/sprite_jump.png" type="Texture" id=5]
+[ext_resource path="res://src/objects/Player/sprite_falling.png" type="Texture" id=6]
+[ext_resource path="res://src/objects/Player/player_healthbar.png" type="Texture" id=7]
+[ext_resource path="res://src/objects/Player/hurt.wav" type="AudioStream" id=8]
+[ext_resource path="res://src/objects/Player/jump.wav" type="AudioStream" id=9]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="CapsuleShape2D" id=1]
 
 custom_solver_bias = 0.0
-radius = 10.0
+radius = 4.08033
+height = 15.8393
 
-[node name="Player" type="KinematicBody2D"]
+[sub_resource type="RectangleShape2D" id=2]
+
+custom_solver_bias = 0.0
+extents = Vector2( 8, 18 )
+
+[sub_resource type="Animation" id=4]
+
+resource_name = "death"
+length = 1.0
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Death:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Death:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5 ]
+}
+
+[sub_resource type="Animation" id=3]
+
+resource_name = "jump"
+length = 0.9
+loop = false
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -18 ), Vector2( 0, -50 ), Vector2( 0, -18 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4, 0.89 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ ExtResource( 5 ), ExtResource( 6 ), ExtResource( 3 ) ]
+}
+
+[node name="Player" type="KinematicBody2D" index="0"]
 
 input_pickable = false
-collision_layer = 1
+collision_layer = 2
 collision_mask = 1
 collision/safe_margin = 0.08
 script = ExtResource( 1 )
+_sections_unfolded = [ "Collision" ]
 
 [node name="TextureRect" type="ColorRect" parent="." index="0"]
 
+visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -36,8 +114,150 @@ _sections_unfolded = [ "Mouse" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
 
+position = Vector2( 0, 3.55555 )
+rotation = 1.5708
 shape = SubResource( 1 )
+_sections_unfolded = [ "Transform" ]
 
-[node name="Sprite" type="Sprite" parent="." index="2"]
+[node name="Hitbox" type="Area2D" parent="." index="2"]
+
+editor/display_folded = true
+position = Vector2( 0, -16 )
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+collision_layer = 2
+collision_mask = 0
+audio_bus_override = false
+audio_bus_name = "Master"
+_sections_unfolded = [ "Collision" ]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" index="0"]
+
+shape = SubResource( 2 )
+
+[node name="Shadow" type="Sprite" parent="." index="3"]
+
+position = Vector2( 0, 1 )
+scale = Vector2( 1.2, 1.2 )
+z_index = 1
+texture = ExtResource( 2 )
+_sections_unfolded = [ "Transform", "Z Index" ]
+
+[node name="Sprite" type="Sprite" parent="." index="4"]
+
+position = Vector2( 0, -18 )
+scale = Vector2( 1.2, 1.2 )
+z_index = 6
+texture = ExtResource( 3 )
+_sections_unfolded = [ "Transform", "Z Index" ]
+
+[node name="Death" type="Sprite" parent="." index="5"]
+
+visible = false
+position = Vector2( 0, -26.4 )
+scale = Vector2( 1.2, 1.2 )
+z_index = 6
+texture = ExtResource( 4 )
+hframes = 6
+_sections_unfolded = [ "Animation", "Transform", "Visibility", "Z Index" ]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="6"]
+
+root_node = NodePath("..")
+autoplay = ""
+playback_process_mode = 1
+playback_default_blend_time = 0.0
+playback_speed = 1.0
+anims/death = SubResource( 4 )
+anims/jump = SubResource( 3 )
+blend_times = [  ]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="7"]
+
+layer = 1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+
+[node name="Container" type="Container" parent="CanvasLayer" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 720.0
+margin_bottom = 145.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Mouse", "Rect" ]
+
+[node name="Health" type="TextureProgress" parent="CanvasLayer/Container" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.5
+anchor_right = 0.0
+anchor_bottom = 0.5
+margin_left = 140.0
+margin_top = 567.5
+margin_right = 228.0
+margin_bottom = 582.5
+rect_scale = Vector2( 5, 5 )
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+min_value = 0.0
+max_value = 5.0
+step = 1.0
+page = 0.0
+value = 5.0
+exp_edit = false
+rounded = false
+texture_under = null
+texture_over = null
+texture_progress = ExtResource( 7 )
+radial_fill_degrees = 360.0
+radial_center_offset = Vector2( 0, 0 )
+nine_patch_stretch = false
+_sections_unfolded = [ "Rect", "Textures" ]
+
+[node name="InvincibleTimer" type="Timer" parent="." index="8"]
+
+process_mode = 1
+wait_time = 2.0
+one_shot = true
+autostart = false
+
+[node name="Hurt" type="AudioStreamPlayer" parent="." index="9"]
+
+stream = ExtResource( 8 )
+volume_db = -25.0
+pitch_scale = 1.0
+autoplay = false
+mix_target = 0
+bus = "Master"
+
+[node name="Jump" type="AudioStreamPlayer" parent="." index="10"]
+
+stream = ExtResource( 9 )
+volume_db = -30.0
+pitch_scale = 1.0
+autoplay = false
+mix_target = 0
+bus = "Master"
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+
+[connection signal="timeout" from="InvincibleTimer" to="." method="_on_InvincibleTimer_timeout"]
 
 
