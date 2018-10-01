@@ -1,5 +1,4 @@
 extends Area2D
-tool
 
 var dir = Vector2()
 var speed = 100
@@ -26,3 +25,7 @@ func _on_Scale_body_entered(body):
 	
 	queue_free()
 	
+
+
+func _on_Visible_screen_exited():
+	queue_free()

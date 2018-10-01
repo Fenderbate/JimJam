@@ -9,7 +9,7 @@
 custom_solver_bias = 0.0
 extents = Vector2( 17.729, 9.88397 )
 
-[node name="Scale" type="Area2D"]
+[node name="Scale" type="Area2D" index="0"]
 
 input_pickable = true
 gravity_vec = Vector2( 0, 1 )
@@ -44,6 +44,12 @@ autoplay = false
 mix_target = 0
 bus = "Master"
 
+[node name="Visible" type="VisibilityNotifier2D" parent="." index="3"]
+
+rect = Rect2( -10, -10, 20, 20 )
+
 [connection signal="body_entered" from="." to="." method="_on_Scale_body_entered"]
+
+[connection signal="screen_exited" from="Visible" to="." method="_on_Visible_screen_exited"]
 
 
